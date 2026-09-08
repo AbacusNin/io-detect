@@ -1,0 +1,17 @@
+postid,accountid,post_time,post_text,post_language,in_reply_to_postid,in_reply_to_accountid,is_repost,reposted_accountid,reposted_postid,hashtags,urls,account_mentions,application_name,account_creation_date,follower_count,following_count,is_control
+p_orig,org,2024-01-01 00:00:00,Coverage of today's summit event live now,en,,,false,,,,,,web,2018-01-01 00:00:00,50000,200,true
+p_rt1,io1,2024-01-01 00:00:01,"",en,,,true,org,p_orig,,,,bot,2024-01-01 00:00:00,20,15,false
+p_rt2,io2,2024-01-01 00:00:02,"",en,,,true,org,p_orig,,,,bot,2024-01-01 00:00:00,20,15,false
+p_rt3,io3,2024-01-01 00:00:03,"",en,,,true,org,p_orig,,,,bot,2024-01-01 00:00:00,20,15,false
+p_rt4,io4,2024-01-01 00:00:04,"",en,,,true,org,p_orig,,,,web,2022-01-01 00:00:00,20,15,false
+p_rt5,io5,2024-01-01 00:00:05,"",en,,,true,org,p_orig,,,,mobile,2022-06-01 00:00:00,20,15,false
+p_dup1,io1,2024-01-01 00:05:01,URGENT share this now everyone must see this important message,en,,,false,,,breakingnews,,victim1,bot,2024-01-01 00:00:00,20,15,false
+p_dup2,io2,2024-01-01 00:05:02,URGENT share this now everyone must see this important message,en,,,false,,,breakingnews,,victim1,bot,2024-01-01 00:00:00,20,15,false
+p_dup3,io3,2024-01-01 00:05:03,URGENT share this now everyone must see this important message,en,,,false,,,breakingnews,,victim1,bot,2024-01-01 00:00:00,20,15,false
+p_dup4,io4,2024-01-01 00:05:04,URGENT share this now everyone must see this important message,en,,,false,,,breakingnews,,victim1,web,2022-01-01 00:00:00,20,15,false
+p_dup5,io5,2024-01-01 00:05:05,URGENT share this now everyone must see this important message,en,,,false,,,breakingnews,,victim1,mobile,2022-06-01 00:00:00,20,15,false
+p_c1,c1,2024-01-01 00:10:01,Just had lunch downtown today,en,,,false,,,,,,web,2018-01-01 00:00:00,300,150,true
+p_c2,c2,2024-01-01 00:10:02,Watching the game tonight,en,,,false,,,,,,web,2018-01-01 00:00:00,300,150,true
+p_c3,c3,2024-01-01 00:10:03,New blog post is up,en,,,false,,,,,,web,2018-01-01 00:00:00,300,150,true
+p_c4,c4,2024-01-01 00:10:04,Great weather this weekend,en,,,false,,,,,,web,2018-01-01 00:00:00,300,150,true
+p_c5,c5,2024-01-01 00:10:05,Reading a good book right now,en,,,false,,,,,,web,2018-01-01 00:00:00,300,150,true
