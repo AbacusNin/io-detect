@@ -11,6 +11,6 @@ def coreposts(df: pl.DataFrame, window_seconds: int = 60) -> pl.DataFrame:
     )
     return (
         j.group_by(["account_id", "account_id_b"])
-        .agg(pl.len().alias("n_shared"))
+        .agg(pl.col("reposted_post_id").n_unique().alias("n_shared"))
         .rename({"account_id": "account_a", "account_id_b": "account_b"})
     )
