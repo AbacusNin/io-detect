@@ -32,5 +32,5 @@ def load_iu(path: str) -> pl.DataFrame:
         _split("hashtags"), _split("urls"), _split("mentions"),
     ])
     df = df.with_columns(pl.lit("iu_2411.10609").alias("source"))
-    df = df.select(list(CANONICAL_SCHEMA.keys()))
+    df = df.select([pl.col(c).cast(t) for c, t in CANONICAL_SCHEMA.items()])
     return validate_frame(df)
