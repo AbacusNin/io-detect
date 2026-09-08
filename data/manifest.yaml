@@ -1,0 +1,9 @@
+datasets:
+  - id: iu_2411.10609
+    name: Labeled Datasets for Research on Information Operations
+    doi: 10.5281/zenodo.14141549
+    url: https://zenodo.org/records/14189072
+    license: CC-BY-NC-ND-4.0
+    access: restricted; requires login and academic affiliation
+    campaign_file: Russia_2
+    sha256: TBD-after-download
