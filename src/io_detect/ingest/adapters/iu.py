@@ -34,3 +34,12 @@ def load_iu(path: str) -> pl.DataFrame:
     df = df.with_columns(pl.lit("iu_2411.10609").alias("source"))
     df = df.select([pl.col(c).cast(t) for c, t in CANONICAL_SCHEMA.items()])
     return validate_frame(df)
+
+
+def load_iu_parquet(path_glob: str) -> pl.DataFrame:
+    """Load real IU parquet parts. List columns already List(String); no comma-splitting."""
+    df = pl.read_parquet(path_glob)
+    df = df.rename(_RENAME)
+    df = df.with_columns(pl.lit("iu_2411.10609").alias("source"))
+    df = df.select([pl.col(c).cast(t) for c, t in CANONICAL_SCHEMA.items()])
+    return validate_frame(df)
