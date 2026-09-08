@@ -19,7 +19,7 @@ def duplicate_pairs(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 def hashtag_flood(df: pl.DataFrame, window_seconds: int = 300) -> pl.DataFrame:
-    e = df.explode("hashtags").rename({"hashtags": "hashtag"}).filter(pl.col("hashtag").is_not_null())
+    e = df.explode("hashtags", empty_as_null=True).rename({"hashtags": "hashtag"}).filter(pl.col("hashtag").is_not_null())
     e = e.with_columns(pl.col("timestamp").dt.truncate(f"{window_seconds}s").alias("window_start"))
     return e.group_by(["hashtag", "window_start"]).agg(
         pl.len().alias("n_posts"),
