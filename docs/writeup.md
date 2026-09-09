@@ -14,24 +14,25 @@ Detection-as-code for coordinated inauthentic behavior, measured against labeled
 | Archive | 14189072.zip, 150,597,200 bytes |
 | Archive sha256 | 0ce1ce1e197b63faa4cdc158215f31eb1323e0287359e785e104420a1a65628c |
 
-No data is committed to this repository. Fetch the campaign file, place it under `data/raw/`, and verify the sha256 above with `io_detect.ingest.integrity` before use.
+I commit no data to this repository. Fetch the campaign file yourself, place it under `data/raw/`, and verify the sha256 above with `io_detect.ingest.integrity` before use.
 
-A second dataset, the FiveThirtyEight release of the Clemson/Linvill-Warren IRA tweets, ingests through the same canonical schema. It is positives-only and carries no control class, so nothing is scored on it.
+A second dataset ingests through the same canonical schema, the FiveThirtyEight release of the Clemson/Linvill-Warren IRA tweets. It is positives-only, with no control class. I score nothing on it.
 
 ## Method
 
 1. Normalize the source into one canonical record schema.
 2. Compute behavioral signals per account and per account pair: co-repost timing, duplicate text, hashtag flooding, mention and reply swarming, automation.
 3. Build a weighted co-activity network from those signals.
-4. Extract dense clusters from that network. A coordinated group knots together into a small, heavily weighted cluster that stands out from the sparse web ordinary accounts sit in.
-5. Sort each flagged cluster into a likely-automated core and the accounts that amplify.
-6. Tag behaviors with DISARM techniques and score the flagged set against the published labels.
+4. Extract dense clusters from that network. A coordinated group knots together into a small, heavily weighted cluster. Ordinary accounts sit in a sparse web, and the extraction keys on that difference.
+5. Sort each flagged cluster into a likely-automated core and the accounts that amplify it.
+6. Tag behaviors with DISARM techniques.
+7. Score the flagged set against the published labels.
 
-DISARM tags are output. Nothing in `features/`, `detect/`, or `eval/` reads a tag or a label to decide what to flag.
+The pipeline outputs DISARM tags and never reads them back. No tag or label reaches `features/`, `detect/`, or `eval/` to decide what gets flagged.
 
 ## Results
 
-Russia_2, scored at account granularity.
+I scored Russia_2 at account granularity.
 
 | Metric | Value |
 |---|---|
@@ -44,40 +45,40 @@ Russia_2, scored at account granularity.
 | Accounts flagged | 447 |
 | Clusters detected | 22 |
 
-The file holds 1,011,052 posts across 21 parts. 920,761 IO rows, 90,291 control rows. 2,536 unique accounts, of which 361 are IO-labeled and 2,175 control-labeled. Load 0.29s, pipeline 4.04s.
+The file holds 1,011,052 posts across 21 parts, 920,761 of them IO rows and 90,291 control rows. Those span 2,536 unique accounts: 361 IO-labeled, 2,175 control-labeled. Loading took 0.29s and the full pipeline 4.04s.
 
 Cluster sizes: 147, 64, 54, 43, 16, 16, 14, 10, 9, 9, 9, 8, 8, 7, 6, 5, 4, 4, 4, 4, 3, 3.
 
-Per-account identifiers and cluster memberships are not published here. The license is no-derivatives.
+I publish no per-account identifiers or cluster memberships here. The license is no-derivatives.
 
 ## Scoring and controls
 
-The negative class is the `is_control` field that ships with the data: Indiana includes organic control posts beside the campaign posts, drawn from accounts discussing the same topics in the same windows. Without a native control class there is nothing for the detector to be wrong about, so there is no honest precision figure to report.
+The negative class comes from the `is_control` field that ships with the data. Indiana includes organic control posts beside the campaign posts. Those come from accounts discussing the same topics in the same windows. Without a native control class the detector has nothing to be wrong about, so no honest precision figure exists.
 
-The pipeline flags accounts, so scoring happens at account level. `account_labels()` takes a majority vote over each account's posts: an account is IO if at least half its posts carry `is_control = False`. `score()` compares the flagged set against those labels.
+The pipeline flags accounts, so I score at account level. `account_labels()` takes a majority vote over each account's posts. An account counts as IO when at least half its posts carry `is_control = False`. `score()` then compares the flagged set against those labels.
 
 ## Limits
 
-Lab metrics like these are an upper bound: this is a fixed, curated, labeled historical dataset with a native control class, and live traffic has none of that structure.
+Lab metrics like these set an upper bound. This dataset is curated and labeled, with a native control class built in. Live traffic has none of that structure.
 
-Russia_2 is built to be 91% IO rows, far above what any real feed looks like, and precision degrades as the base rate drops toward natural, much lower levels of IO. The same false-positive rate produces much worse precision at that lower rate. The 0.54 above describes Russia_2. It does not predict what a live feed would produce.
+Indiana built Russia_2 at 91% IO rows. No real feed looks like that. Precision degrades as the base rate drops toward natural, much lower levels of IO, because the same false-positive rate produces much worse precision at that lower rate. The 0.54 above describes Russia_2. It does not predict what a live feed would produce.
 
-Co-repost timing, duplicate content, hashtag floods and mention swarms are signals of coordination. They say nothing about authenticity, and a tightly organized genuine community can trip the same thresholds as a paid one. A flag from this pipeline is not attribution, and it is not proof that an account is fake. Someone still has to look at it before anyone acts on the result.
+Co-repost timing, duplicate content, hashtag floods and mention swarms signal coordination. They say nothing about authenticity. A tightly organized genuine community trips the same thresholds a paid one does, so a flag from this pipeline is not attribution. Neither is it proof that an account is fake. Someone still has to look at it before anyone acts on the result.
 
-`application_name` in the parquet release is hashed rather than a readable client string, which kills the automation signal on this data. Russia_2 carries 304 distinct hash values, none matching the literal markers `automation_scores()` looks for, so `automated_share` comes back 0.0 for every account, T0037 never fires, and triage gets no automation signal here. The zero is an artifact of the anonymized field, not evidence about the campaign: it says nothing about whether Russia_2 actually used automation, and no automation results were invented to fill the gap.
+The parquet release hashes `application_name` instead of shipping a readable client string. That kills the automation signal on this data. Russia_2 carries 304 distinct hash values, and none match the literal markers `automation_scores()` looks for. `automated_share` comes back 0.0 for every account, T0037 never fires, and triage gets no automation signal here. That zero came out of the anonymized field. It says nothing about whether Russia_2 actually used automation, and I did not invent automation results to fill the gap.
 
 ## Schema notes
 
 The second source forced three decisions.
 
-The two sources don't share a control class. Indiana has one; Clemson is positives-only. A bare boolean would have hidden that difference. `label` plus `label_scheme` records where the class came from, and `is_control` survives as a projection of `label == "control"`, so the scoring code did not change. A third source writes its own `label_scheme` rather than overloading an existing one.
+The two sources don't share a control class. Indiana has one; Clemson is positives-only. A bare boolean would have hidden that difference. `label` plus `label_scheme` records where the class came from. `is_control` survives as a projection of `label == "control"`, so the scoring code did not change. A third source writes its own `label_scheme`.
 
-Repost linkage and entity fields do not survive Clemson. Indiana gives `reposted_postid` and `reposted_accountid` per retweet. Clemson's `retweet` column is a bare flag with no pointer back to the original, so those fields stay null. Clemson also embeds hashtags and mentions in the tweet text rather than shipping them as fields, so both come back empty instead of guessed at, and a detector reading those fields sees a real absence, not a fabricated value.
+Repost linkage and entity fields do not survive Clemson. Indiana gives `reposted_postid` and `reposted_accountid` per retweet. Clemson's `retweet` column is a bare flag with no pointer back to the original, so those fields stay null. Clemson also embeds hashtags and mentions in the tweet text instead of shipping them as fields. Both come back empty. A detector reading those fields sees a real absence.
 
-`actor_role` is annotation. `account_category` is Linvill and Warren's analyst-coded persona label (RightTroll, NewsFeed, and so on). It exists only on Clemson rows, and nothing in the detection path reads it. Building on it would make results source-dependent.
+`actor_role` only annotates. `account_category` holds Linvill and Warren's analyst-coded persona label (RightTroll, NewsFeed, and so on). It exists only on Clemson rows. Nothing in the detection path reads it, because building on it would make my results source-dependent.
 
 Field-by-field mapping: `docs/schema/crosswalk.md`.
 
 ## Build
 
-Python. polars for data, networkx for graphs. Test-first, 30 tests. Apache 2.0. `make demo` runs the full pipeline on a small synthetic fixture, so the tool is runnable without the gated dataset.
+I wrote the tool in Python. polars handles the data work and networkx builds the graph. I developed it test-first, so it ships with 30 tests. I license it under Apache 2.0. `make demo` runs the full pipeline on a small synthetic fixture, so the tool runs without the gated dataset.
