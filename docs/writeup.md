@@ -23,7 +23,7 @@ A second corpus, the FiveThirtyEight release of the Clemson/Linvill-Warren IRA t
 1. Normalize the source into one canonical record schema.
 2. Compute behavioral signals per account and per account pair: co-repost timing, duplicate text, hashtag flooding, mention and reply swarming, automation.
 3. Build a weighted co-activity network from those signals.
-4. Extract dense clusters. Ordinary accounts sit in a sparse web; coordinated groups form tight, heavily weighted knots.
+4. Extract dense clusters from that network. A coordinated group knots together into a small, heavily weighted cluster that stands out from the sparse web ordinary accounts sit in.
 5. Sort each flagged cluster into a likely-automated core and the accounts that amplify.
 6. Tag behaviors with DISARM techniques and score the flagged set against the corpus labels.
 
@@ -52,27 +52,27 @@ Per-account identifiers and cluster memberships are not published here. The corp
 
 ## Scoring and controls
 
-The negative class is the corpus's own `is_control` field. Indiana ships organic control posts beside the campaign posts, drawn from accounts discussing the same topics in the same windows. Without a native control class there is nothing for the detector to be wrong about, and no honest precision figure.
+The negative class is the corpus's own `is_control` field: Indiana ships organic control posts beside the campaign posts, drawn from accounts discussing the same topics in the same windows. Without a native control class there is nothing for the detector to be wrong about, so there is no honest precision figure to report.
 
 The pipeline flags accounts, so scoring happens at account level. `account_labels()` takes a majority vote over each account's posts: an account is IO if at least half its posts carry `is_control = False`. `score()` compares the flagged set against those labels.
 
 ## Limits
 
-Lab metrics are an upper bound. This is a fixed, curated, labeled historical corpus with a native control class. Live traffic has neither.
+Lab metrics like these are an upper bound: this is a fixed, curated, labeled historical corpus with a native control class, and live traffic has none of that structure.
 
-Precision degrades at real base rates. Russia_2 is 91% IO rows by construction. Natural IO prevalence runs far lower, and the same false-positive rate produces much worse precision against it. The 0.54 above is not a forecast for a live feed.
+Russia_2 is built to be 91% IO rows, far above what any real feed looks like, and precision degrades as the base rate drops toward natural, much lower levels of IO. The same false-positive rate produces much worse precision at that lower rate. The 0.54 above describes this corpus. It does not predict what a live feed would produce.
 
-Coordination is not authenticity. Co-repost timing, duplicate content, hashtag floods and mention swarms are coordination signals. A tightly organized genuine community trips the same thresholds as a paid one. Flags are not attribution and not proof of inauthenticity. A human decides.
+Co-repost timing, duplicate content, hashtag floods and mention swarms are signals of coordination. They say nothing about authenticity, and a tightly organized genuine community can trip the same thresholds as a paid one. A flag from this pipeline is not attribution, and it is not proof that an account is fake. Someone still has to look at it before anyone acts on the result.
 
-The automation signal is dead on this corpus. `application_name` in the parquet release is hashed rather than a readable client string. Russia_2 carries 304 distinct hash values, none matching the literal markers `automation_scores()` looks for, so `automated_share` is 0.0 for every account, T0037 never fires, and triage carries no automation signal here. That reflects the anonymized field. It says nothing about whether the campaign used automation, and no automation results were invented to fill the gap.
+`application_name` in the parquet release is hashed rather than a readable client string, which kills the automation signal on this corpus. Russia_2 carries 304 distinct hash values, none matching the literal markers `automation_scores()` looks for, so `automated_share` comes back 0.0 for every account, T0037 never fires, and triage gets no automation signal here. The zero is an artifact of the anonymized field, not evidence about the campaign: it says nothing about whether Russia_2 actually used automation, and no automation results were invented to fill the gap.
 
 ## Schema notes
 
 The second source forced three decisions.
 
-Control is not universal. Indiana has a control class; Clemson is positives-only. A bare boolean would have hidden that. `label` plus `label_scheme` records where the class came from, and `is_control` survives as a projection of `label == "control"`, so the scoring code did not change. A third source writes its own `label_scheme` rather than overloading an existing one.
+The two sources don't share a control class. Indiana has one; Clemson is positives-only. A bare boolean would have hidden that difference. `label` plus `label_scheme` records where the class came from, and `is_control` survives as a projection of `label == "control"`, so the scoring code did not change. A third source writes its own `label_scheme` rather than overloading an existing one.
 
-Repost linkage and entity fields do not survive Clemson. Indiana gives `reposted_postid` and `reposted_accountid` per retweet. Clemson's `retweet` column is a bare flag with no pointer back to the original, so those fields stay null. Clemson also embeds hashtags and mentions in the tweet text rather than shipping them as fields, so both come back empty instead of guessed at. A detector reading them gets an honest absence.
+Repost linkage and entity fields do not survive Clemson. Indiana gives `reposted_postid` and `reposted_accountid` per retweet. Clemson's `retweet` column is a bare flag with no pointer back to the original, so those fields stay null. Clemson also embeds hashtags and mentions in the tweet text rather than shipping them as fields, so both come back empty instead of guessed at, and a detector reading those fields sees a real absence, not a fabricated value.
 
 `actor_role` is annotation. `account_category` is Linvill and Warren's analyst-coded persona label (RightTroll, NewsFeed, and so on). It exists only on Clemson rows, and nothing in the detection path reads it. Building on it would make results source-dependent.
 
