@@ -3,7 +3,7 @@
 Where each canonical field comes from in the two source adapters. IU is
 `load_iu` / `load_iu_parquet` (Zenodo 10.5281/zenodo.14141549). Clemson is
 `load_clemson` (the FiveThirtyEight release of the Clemson/Linvill-Warren IRA
-tweet corpus).
+tweets).
 
 | Canonical field | IU source | Clemson source |
 |---|---|---|

@@ -6,8 +6,8 @@ precision and recall against that ground truth.
 
 ## Measured results
 
-Scored on the Indiana University "Russia_2" campaign file against that
-corpus's own `is_control` labels, at account granularity: precision 0.5436,
+Scored on the Indiana University "Russia_2" campaign file against the
+`is_control` labels that ship with it, at account granularity: precision 0.5436,
 recall 0.6731 (243 true positives, 204 false positives, 118 false
 negatives, 361 IO-labeled accounts). See `docs/writeup.md` for the full run
 output, how the control set is built, and what the number does and
@@ -22,7 +22,7 @@ a curated dataset: it does not predict what a live feed would produce.
 ## Ingest
 
 Two source datasets ingest into one canonical schema: the Indiana University
-corpus (`load_iu`, `load_iu_parquet`) and the Clemson/Linvill-Warren IRA
+release (`load_iu`, `load_iu_parquet`) and the Clemson/Linvill-Warren IRA
 tweet release (`load_clemson`). Every detection and scoring module reads
 that canonical schema, not either source format directly. See
 `docs/schema/crosswalk.md` for the field-by-field mapping and the gaps each
