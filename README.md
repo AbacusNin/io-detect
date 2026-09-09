@@ -9,9 +9,9 @@ precision and recall against that ground truth.
 Scored on the Indiana University "Russia_2" campaign file against that
 corpus's own `is_control` labels, at account granularity: precision 0.5436,
 recall 0.6731 (243 true positives, 204 false positives, 118 false
-negatives, 361 IO-labeled accounts). See `results/Russia_2-metrics.json`
-for the full run output and `docs/methodology/control-construction.md` for
-how the control set is built and what the number does and doesn't mean.
+negatives, 361 IO-labeled accounts). See `docs/writeup.md` for the full run
+output, how the control set is built, and what the number does and
+doesn't mean.
 
 Precision 0.54 is a lab-sample number, not a field guarantee. Russia_2 is
 enriched to 91% IO rows by construction, and precision degrades fast as the
