@@ -1,6 +1,6 @@
 # Roadmap
 
-io-detect v1 is built and measured. The next work turns one measured run into a small evaluation suite. Three items, in the order I plan to tackle them. A formal research paper is deliberately not on this list; see the note at the end.
+io-detect v1 is built and measured. The next work turns one measured run into a small evaluation suite. Three items, in the order I plan to tackle them.
 
 ## 1. Ablation
 
@@ -13,10 +13,6 @@ Right now the headline numbers (precision about 0.54, recall about 0.67 on Russi
 ## 3. Generalization
 
 Measure on one campaign and test on another. The Indiana dataset covers 26 campaigns, not only Russia_2, so this needs no new source, though each campaign file is a separate gated download. The output is whether the result holds when the tool meets a campaign it was not tuned on. A drop would be a real finding and would be reported as one.
-
-## Not in scope
-
-A formal research paper. The three items above are worth doing as improvements to this tool on their own. If a paper is ever written it would come from their results, but it is not a goal of this repository.
 
 ## Ceiling (unchanged)
 
