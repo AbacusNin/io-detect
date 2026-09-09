@@ -56,10 +56,16 @@ def test_load_iu_parquet_maps_to_canonical(tmp_path):
     assert row["urls"] == []
     assert row["source"] == "iu_2411.10609"
     assert row["is_control"] is True
+    assert row["label"] == "control"
+    assert row["label_scheme"] == "iu_2411.10609"
+    assert row["actor_role"] is None
+    assert row["account_region"] is None
 
     row2 = df.row(1, named=True)
     assert row2["hashtags"] == []
     assert row2["mentions"] == []
+    assert row2["is_control"] is False
+    assert row2["label"] == "io"
 
     # dtype conformance, including the Date -> Datetime cast for account_created
     assert df.schema["timestamp"] == pl.Datetime

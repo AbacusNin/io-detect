@@ -23,6 +23,17 @@ def _split(col: str) -> pl.Expr:
     )
 
 
+def _label_cols() -> list[pl.Expr]:
+    return [
+        pl.lit("iu_2411.10609").alias("source"),
+        pl.when(pl.col("is_control")).then(pl.lit("control")).otherwise(pl.lit("io")).alias("label"),
+        pl.lit("iu_2411.10609").alias("label_scheme"),
+        pl.lit(None, dtype=pl.Utf8).alias("actor_role"),
+        pl.lit(None, dtype=pl.Utf8).alias("actor_role_scheme"),
+        pl.lit(None, dtype=pl.Utf8).alias("account_region"),
+    ]
+
+
 def load_iu(path: str) -> pl.DataFrame:
     df = pl.read_csv(path, infer_schema_length=10000)
     df = df.rename(_RENAME)
@@ -31,7 +42,7 @@ def load_iu(path: str) -> pl.DataFrame:
         pl.col("account_created").str.to_datetime(strict=False),
         _split("hashtags"), _split("urls"), _split("mentions"),
     ])
-    df = df.with_columns(pl.lit("iu_2411.10609").alias("source"))
+    df = df.with_columns(_label_cols())
     df = df.select([pl.col(c).cast(t) for c, t in CANONICAL_SCHEMA.items()])
     return validate_frame(df)
 
@@ -40,6 +51,6 @@ def load_iu_parquet(path_glob: str) -> pl.DataFrame:
     """Load real IU parquet parts. List columns already List(String); no comma-splitting."""
     df = pl.read_parquet(path_glob)
     df = df.rename(_RENAME)
-    df = df.with_columns(pl.lit("iu_2411.10609").alias("source"))
+    df = df.with_columns(_label_cols())
     df = df.select([pl.col(c).cast(t) for c, t in CANONICAL_SCHEMA.items()])
     return validate_frame(df)

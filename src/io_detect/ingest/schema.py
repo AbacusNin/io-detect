@@ -23,6 +23,11 @@ CANONICAL_SCHEMA: dict[str, pl.DataType] = {
     "following": pl.Int64,
     "is_control": pl.Boolean,
     "source": pl.Utf8,
+    "label": pl.Utf8,
+    "label_scheme": pl.Utf8,
+    "actor_role": pl.Utf8,
+    "actor_role_scheme": pl.Utf8,
+    "account_region": pl.Utf8,
 }
 
 def validate_frame(df: pl.DataFrame) -> pl.DataFrame:

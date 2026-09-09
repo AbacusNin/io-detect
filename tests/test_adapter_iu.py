@@ -29,6 +29,10 @@ def test_load_iu_maps_to_canonical(tmp_path):
     assert row["urls"] == []  # Empty string must map to empty list
     assert row["source"] == "iu_2411.10609"
     assert row["is_control"] is True
+    assert row["label"] == "control"
+    assert row["label_scheme"] == "iu_2411.10609"
+    assert row["actor_role"] is None
+    assert row["account_region"] is None
 
     # Test dtype conformance
     assert df.schema["timestamp"] == pl.Datetime
@@ -39,3 +43,5 @@ def test_load_iu_maps_to_canonical(tmp_path):
     assert row2["hashtags"] == []  # None must map to empty list
     assert row2["mentions"] == []  # None must map to empty list
     assert row2["urls"] == []  # Empty string must map to empty list
+    assert row2["is_control"] is False
+    assert row2["label"] == "io"
