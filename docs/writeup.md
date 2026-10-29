@@ -21,14 +21,16 @@ A second dataset ingests through the same canonical schema, the FiveThirtyEight 
 ## Method
 
 1. Normalize the source into one canonical record schema.
-2. Compute behavioral signals per account and per account pair: co-repost timing, duplicate text, hashtag flooding, mention and reply swarming, automation.
-3. Build a weighted co-activity network from those signals.
+2. Compute behavioral signals. Co-repost timing and duplicate text are scored per account pair, automation per account, and hashtag flooding and mention or reply swarming across the whole file.
+3. Build a weighted co-activity network from the two pairwise signals, co-repost timing and duplicate text. Those two are the only signals that decide which accounts get flagged.
 4. Extract dense clusters from that network. A coordinated group knots together into a small, heavily weighted cluster. Ordinary accounts sit in a sparse web, and the extraction keys on that difference.
-5. Sort each flagged cluster into a likely-automated core and the accounts that amplify it.
-6. Tag behaviors with DISARM techniques.
+5. Sort each flagged cluster into a likely-automated core and the accounts that amplify it, using each account's automation share.
+6. Record which DISARM techniques show up anywhere in the file.
 7. Score the flagged set against the published labels.
 
 The pipeline outputs DISARM tags and never reads them back. No tag or label reaches `features/`, `detect/`, or `eval/` to decide what gets flagged.
+
+The tags describe the file as a whole. Each one fires when its signal turns up anywhere in the data, even once. Two accounts sharing one hashtag in the same five-minute window are enough to fire T0043. So a tag says that a behavior exists somewhere in the file. It does not tie that behavior to a cluster or an account. On Russia_2, the 2,175 control accounts on their own produce exactly the same four tags as the full file.
 
 ## Results
 
@@ -44,6 +46,7 @@ I scored Russia_2 at account granularity.
 | IO-labeled accounts | 361 |
 | Accounts flagged | 447 |
 | Clusters detected | 22 |
+| Precision at chance (447 random flags) | 0.1424 |
 
 The file holds 1,011,052 posts across 21 parts, 920,761 of them IO rows and 90,291 control rows. Those span 2,536 unique accounts: 361 IO-labeled, 2,175 control-labeled. Loading took 0.29s and the full pipeline 4.04s.
 
@@ -61,7 +64,7 @@ The pipeline flags accounts, so I score at account level. `account_labels()` tak
 
 Lab metrics like these set an upper bound. This dataset is curated and labeled, with a native control class built in. Live traffic has none of that structure.
 
-Indiana built Russia_2 at 91% IO rows. No real feed looks like that. Precision degrades as the base rate drops toward natural, much lower levels of IO, because the same false-positive rate produces much worse precision at that lower rate. The 0.54 above describes Russia_2. It does not predict what a live feed would produce.
+Indiana built Russia_2 at 91% IO rows. I score accounts, though, and the account-level base rate is lower: 361 of 2,536 accounts, or 14.2%. Read precision against that rate. Flagging 447 accounts at random would score about 0.14 precision and 0.18 recall, so 0.54 is roughly 3.8 times chance. No real feed carries 14% IO accounts either. Precision degrades as the base rate drops toward natural, much lower levels of IO, because the same false-positive rate produces much worse precision at that lower rate. The 0.54 above describes Russia_2. It does not predict what a live feed would produce.
 
 Co-repost timing, duplicate content, hashtag floods and mention swarms signal coordination. They say nothing about authenticity. A tightly organized genuine community trips the same thresholds a paid one does, so a flag from this pipeline is not attribution. Neither is it proof that an account is fake. Someone still has to look at it before anyone acts on the result.
 

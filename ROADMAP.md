@@ -4,11 +4,11 @@ io-detect v1 is built and measured. The next work turns one measured run into a 
 
 ## 1. Ablation
 
-Turn each behavioral signal off one at a time (repost synchrony, content duplication, hashtag flooding, swarming, automation) and re-score against the controls. The pipeline already computes every signal, so this is mostly a matter of toggling flags and rerunning the metrics, which makes it the cheapest item on this list. The output is a table of precision and recall with each signal removed, showing which signals actually carry the result.
+Two signals build the graph that decides what gets flagged: repost synchrony and content duplication. Turn each off in turn and re-score against the controls. Hashtag flooding, swarming and automation only feed the DISARM tags and triage, so removing them cannot move precision or recall as the pipeline stands. The second half of this item tests whether those three earn a place in the graph as pairwise edges. The pipeline already computes every signal, which makes this the cheapest item on the list. The output is a table of precision and recall for each variant, showing which signals actually carry the result.
 
 ## 2. Baseline
 
-Right now the headline numbers (precision about 0.54, recall about 0.67 on Russia_2) sit against nothing. This item adds at least one comparison on the same data and the same split: a simple account-level classifier on the same features, or an existing published coordination-detection method. The output is the pipeline's numbers reported beside the baseline's.
+Right now the headline numbers (precision about 0.54, recall about 0.67 on Russia_2) sit against chance only: flagging the same 447 accounts at random would score about 0.14 precision. This item adds at least one real comparison on the same data and the same split: a simple account-level classifier on the same features, or an existing published coordination-detection method. The output is the pipeline's numbers reported beside the baseline's.
 
 ## 3. Generalization
 
