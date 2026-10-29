@@ -58,3 +58,14 @@ checks only feed the DISARM tags, which describe the whole file and point at
 no particular account. All of these measure coordination. They say nothing
 about authenticity or viewpoint, and a flagged account still needs a human
 in the loop before anyone acts on it.
+
+## License
+
+Apache License 2.0 with the Commons Clause. Anyone, including a company or a
+government agency, may use, change, and share io-detect free of charge, for
+example to study coordinated activity in data it is allowed to use. Nobody may
+sell it, host it for a fee, or sell a product or service, including consulting
+or support, whose value comes entirely or substantially from it. This makes it
+source-available rather than OSI open source. See `LICENSE` and `NOTICE`.
+
+I'm not accepting outside contributions.

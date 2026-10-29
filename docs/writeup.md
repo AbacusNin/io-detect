@@ -94,4 +94,4 @@ Field-by-field mapping: `docs/schema/crosswalk.md`.
 
 ## Build
 
-I wrote the tool in Python. polars handles the data work and networkx builds the graph. I developed it test-first, so it ships with 30 tests. I license it under Apache 2.0. `make demo` runs the full pipeline on a small synthetic fixture, so the tool runs without the gated dataset.
+I wrote the tool in Python. polars handles the data work and networkx builds the graph. I developed it test-first, so it ships with 30 tests. I license it under Apache 2.0 with the Commons Clause, so anyone can use it free and nobody else can sell it. `make demo` runs the full pipeline on a small synthetic fixture, so the tool runs without the gated dataset.
