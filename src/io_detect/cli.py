@@ -3,6 +3,7 @@ import json
 
 from io_detect.ingest.adapters.iu import load_iu, load_iu_parquet
 from io_detect.ingest.adapters.clemson import load_clemson
+from io_detect.eval.ablation import ablate
 from io_detect.pipeline import run
 
 LOADERS = {
@@ -18,6 +19,9 @@ def build_parser() -> argparse.ArgumentParser:
     d = sub.add_parser("detect")
     d.add_argument("--input", required=True)
     d.add_argument("--source", default="iu", choices=sorted(LOADERS))
+    a = sub.add_parser("ablate")
+    a.add_argument("--input", required=True)
+    a.add_argument("--source", default="iu", choices=sorted(LOADERS))
     return p
 
 
@@ -25,6 +29,13 @@ def main():
     args = build_parser().parse_args()
 
     df = LOADERS[args.source](args.input)
+
+    if args.cmd == "ablate":
+        for r in ablate(df):
+            print(f"{r['variant']:20} pairs {r['pairs']:6}  flagged {r['flagged']:5}"
+                  f"  P {r['precision']:.4f}  R {r['recall']:.4f}")
+        return
+
     out = run(df)
     out["flagged_accounts"] = sorted(out["flagged_accounts"])
     out.pop("triage", None)

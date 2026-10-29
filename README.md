@@ -18,6 +18,21 @@ the file's 2,536 accounts IO-labeled. Flagging 447 accounts at random would
 score about 0.14 precision and 0.18 recall, so 0.54 is roughly 3.8 times
 chance.
 
+### Which signal carries it
+
+`io_detect ablate` turns each graph signal off in turn and re-scores. On Russia_2:
+
+| Graph built from | Account pairs | Flagged | Precision | Recall |
+|---|---|---|---|---|
+| Both signals, as shipped | 11,309 | 447 | 0.5436 | 0.6731 |
+| Duplicate text only | 11,146 | 443 | 0.5485 | 0.6731 |
+| Co-repost timing only | 163 | 36 | 0.8056 | 0.0803 |
+
+Duplicate text carries the result. Dropping co-repost timing leaves recall
+identical and nudges precision up. Co-repost timing alone is precise and
+nearly blind, and it contributes 163 account pairs against duplicate text's
+11,146. Read 0.5436 as a duplicate-text number.
+
 Precision 0.54 is still a lab-sample number. Russia_2 is curated: 91% of its
 posts are IO, and no live feed holds anything like 14% IO accounts. Precision
 degrades as that base rate drops toward its natural, much lower level. Treat

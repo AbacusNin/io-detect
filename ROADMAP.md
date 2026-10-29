@@ -4,7 +4,21 @@ io-detect v1 is built and measured. The next work turns one measured run into a 
 
 ## 1. Ablation
 
-Two signals build the graph that decides what gets flagged: repost synchrony and content duplication. Turn each off in turn and re-score against the controls. Hashtag flooding, swarming and automation only feed the DISARM tags and triage, so removing them cannot move precision or recall as the pipeline stands. The second half of this item tests whether those three earn a place in the graph as pairwise edges. The pipeline already computes every signal, which makes this the cheapest item on the list. The output is a table of precision and recall for each variant, showing which signals actually carry the result.
+Run `io_detect ablate` to turn each graph signal off in turn and re-score. Done for the two
+signals that build the graph. On Russia_2:
+
+| Graph built from | Account pairs | Flagged | Precision | Recall |
+|---|---|---|---|---|
+| Both signals, as shipped | 11,309 | 447 | 0.5436 | 0.6731 |
+| Duplicate text only | 11,146 | 443 | 0.5485 | 0.6731 |
+| Co-repost timing only | 163 | 36 | 0.8056 | 0.0803 |
+
+Duplicate text carries the result, and co-repost timing is precise and nearly blind. The
+163 pairs it contributes sit against duplicate text's 11,146.
+
+Still open: whether hashtag flooding, swarming and automation earn a place in the graph as
+pairwise edges. Today they feed only the DISARM tags and triage roles. That leaves the
+flagged set untouched, so there is nothing in them yet to ablate.
 
 ## 2. Baseline
 
