@@ -52,6 +52,16 @@ The file holds 1,011,052 posts across 21 parts, 920,761 of them IO rows and 90,2
 
 Cluster sizes: 147, 64, 54, 43, 16, 16, 14, 10, 9, 9, 9, 8, 8, 7, 6, 5, 4, 4, 4, 4, 3, 3.
 
+To see which signal produces that number, `io_detect ablate` turns each graph signal off in turn and re-scores:
+
+| Graph built from | Account pairs | Flagged | Precision | Recall |
+|---|---|---|---|---|
+| Both signals, as shipped | 11,309 | 447 | 0.5436 | 0.6731 |
+| Duplicate text only | 11,146 | 443 | 0.5485 | 0.6731 |
+| Co-repost timing only | 163 | 36 | 0.8056 | 0.0803 |
+
+Duplicate text carries the result. Dropping co-repost timing leaves recall identical and nudges precision up. Co-repost timing on its own is precise and nearly blind, with 163 account pairs against duplicate text's 11,146. I read 0.5436 as a duplicate-text number.
+
 I publish no per-account identifiers or cluster memberships here. The license is no-derivatives.
 
 ## Scoring and controls
